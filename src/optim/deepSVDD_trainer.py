@@ -58,7 +58,7 @@ class DeepSVDDTrainer(BaseTrainer):
             uRangeLow=0
             uRangeHigh=250
             uLength=1
-        elif self.dataForConstraints=='mine_reactorCooler_2d':
+        elif self.dataForConstraints=='mine_reactorCooler_2d' or self.dataForConstraints=='mine_reactorCooler_5d':
             nU=100
             uRangeLow = [0,3.00]
             uRangeHigh = [6.804,3.56]
@@ -364,6 +364,31 @@ class DeepSVDDTrainer(BaseTrainer):
                      flag=True
                 return flag                   
             return constraint        
+
+        elif dataForConstraintsChoice=='mine_reactorCooler_5d':
+            def constraint(theta,z,stateModel):
+                flag=False
+                Ca0=32.04
+                #stateInput=torch.tensor(np.array([theta.flatten(),z])).to(self.device)
+                #stateInput=torch.tensor(np.append(theta.flatten()/10.0,z.flatten()),dtype=torch.float32).to(self.device)
+                stateInput = torch.tensor(np.append( [a/b for a,b in zip(theta.flatten(),[10.0,10.0,100.0,100.0,1.0])], z.flatten()), dtype=torch.float32).to(self.device)
+                #states=stateModel(stateInput).cpu().detach().numpy().flatten()
+                states=stateModel(stateInput)
+                states=torch.flatten(states)
+                Tw1 = stateInput[2] * 100.0
+                Tw2=stateInput[6]*100.0
+                Ca1=states[0]
+                T1=states[1]*10+390.
+                T2=states[2]*10+300.
+                constraint1=(Ca0-Ca1)/Ca0
+                constraint3=T1-T2
+                constraint4=T1-Tw2-11.1
+                constraint5=T2-Tw1-11.1
+                if constraint1>=0.9 and T1>=311 and T1<=389 and constraint3>=0 and constraint4>=0 and constraint5>=0:
+                     flag=True
+                return flag
+            return constraint
+
 
     def stateModelFunction(self,dataForConstraintsChoice):
         if dataForConstraintsChoice=='mine':
