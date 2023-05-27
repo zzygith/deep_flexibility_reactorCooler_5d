@@ -11,6 +11,7 @@ import torch.optim as optim
 import numpy as np
 from .heaterExchangerState import HENState
 from .reactorCooler2dState import RC2DState
+from .reactorCooler5dState import RC5DState
 
 class DeepSVDDTrainer(BaseTrainer):
 
@@ -383,9 +384,16 @@ class DeepSVDDTrainer(BaseTrainer):
             dataRoot='./optim/partData3StepTrain_model.pt'
             RC2DStateModel = RC2DState().to(self.device)
             RC2DStateModel.load_state_dict(torch.load(dataRoot))
-            return RC2DStateModel            
-            
-    # def init_center_c(self, train_loader: DataLoader, net: BaseNet, eps=0.1):
+            return RC2DStateModel
+
+        elif dataForConstraintsChoice == 'mine_reactorCooler_5d':
+            dataRoot = './optim/partData3StepTrain_model_5d.pt'
+            RC5DStateModel = RC5DState().to(self.device)
+            RC5DStateModel.load_state_dict(torch.load(dataRoot))
+            return RC5DStateModel
+
+
+            # def init_center_c(self, train_loader: DataLoader, net: BaseNet, eps=0.1):
     #     """Initialize hypersphere center c as the mean from an initial forward pass on the data."""
     #     n_samples = 0
     #     c = torch.zeros(net.rep_dim, device=self.device)
