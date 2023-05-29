@@ -348,7 +348,7 @@ class DeepSVDDTrainer(BaseTrainer):
                 Ca0=32.04
                 Tw1=300.0
                 #stateInput=torch.tensor(np.array([theta.flatten(),z])).to(self.device)
-                stateInput=torch.tensor(np.append(theta.flatten()/10.0,z.flatten()),dtype=torch.float32).to(self.device)
+                stateInput=torch.tensor(np.append(theta.flatten(),z.flatten()),dtype=torch.float32).to(self.device)
                 #states=stateModel(stateInput).cpu().detach().numpy().flatten()
                 states=stateModel(stateInput)
                 states=torch.flatten(states)
@@ -371,7 +371,8 @@ class DeepSVDDTrainer(BaseTrainer):
                 Ca0=32.04
                 #stateInput=torch.tensor(np.array([theta.flatten(),z])).to(self.device)
                 #stateInput=torch.tensor(np.append(theta.flatten()/10.0,z.flatten()),dtype=torch.float32).to(self.device)
-                stateInput = torch.tensor(np.append( [a/b for a,b in zip(theta.flatten(),[10.0,10.0,100.0,100.0,1.0])], z.flatten()), dtype=torch.float32).to(self.device)
+                #stateInput = torch.tensor(np.append( [a/b for a,b in zip(theta.flatten(),[10.0,10.0,100.0,100.0,1.0])], z.flatten()), dtype=torch.float32).to(self.device)
+                stateInput = torch.tensor(np.append(theta.flatten(), z.flatten()), dtype=torch.float32).to(self.device)
                 #states=stateModel(stateInput).cpu().detach().numpy().flatten()
                 states=stateModel(stateInput)
                 states=torch.flatten(states)
